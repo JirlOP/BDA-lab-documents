@@ -1,4 +1,5 @@
 const Semester = require('../models/semester');
+const Course = require('../models/course');
 
 // @desc    Create a new semester
 // @route   POST /api/semesters
@@ -58,11 +59,18 @@ exports.updateSemester = async (req, res) => {
 // @route   DELETE /api/semesters/:id
 exports.deleteSemester = async (req, res) => {
   try {
-    const semester = await Semester.findByIdAndDelete(req.params.id);
+    const semester = await Semester.findById(req.params.id);
     if (!semester) {
       return res.status(404).json({ msg: 'Semester not found' });
     }
-    res.status(200).json({ msg: 'Semester removed' });
+
+    // Delete all courses associated with the semester
+    await Course.deleteMany({ _id: { $in: semester.courses } });
+
+    // Delete the semester itself
+    await semester.remove();
+
+    res.status(200).json({ msg: 'Semester and associated courses removed' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
