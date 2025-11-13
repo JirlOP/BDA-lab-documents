@@ -68,7 +68,7 @@ exports.deleteSemester = async (req, res) => {
     await Course.deleteMany({ _id: { $in: semester.courses } });
 
     // Delete the semester itself
-    await semester.remove();
+    await semester.deleteOne();
 
     res.status(200).json({ msg: 'Semester and associated courses removed' });
   } catch (err) {
