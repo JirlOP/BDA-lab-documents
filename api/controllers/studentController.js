@@ -89,7 +89,7 @@ exports.removeStudentFromCourse = async (req, res) => {
       return res.status(404).json({ msg: 'Student not found' });
     }
 
-    student.remove();
+    student.deleteOne();
     await course.save();
 
     res.status(200).json({ msg: 'Student removed' });
